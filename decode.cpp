@@ -20,14 +20,35 @@ void DecodeData(program_arguments*args)
 
     char* key = 0;
     int key_size = 0;
-
-    if(!args->key_file_present)
+    if(args->key_file_present)
     {
-	/** If we do not have key file currently - ask for private key from stdin **/
+	int ret = 0;
+	int file_size = 0;
+	FILE *kF = fopen(args->key_file,"r");
+	if(kF==0)
+	    throw new IOException(KEYFILE_IO_ERROR,"cannot open keyfile for reading.");
+	fseek(kF,0,SEEK_END);
+	file_size = ftell(kF);
+	key_size = file_size;
+	rewind(kF);
+	printf("Working on %s. %d bytes to process...\n",args->key_file,file_size);
+
+	/** Load key file into memory **/
+	key = new char[file_size];
+	ret = fread((void*)key,1,file_size,kF);	
+
+	if(ret == 0)
+	    throw new IOException(KEYFILE_IO_ERROR,"cannot read private key from file.");
+	fclose(f);
+	printf("Successfully loaded private key into memory!\n");
     }
     else
-    {
-	/** Rebuild key from key file **/
+    {	key = new char[max_key_size_stdin];
+	bzero(data,max_key_size_stdin);
+
+	printf("You have not specified key file!\nEnter private key to encode(2B maximum):");
+	fgets(key,max_key_size_stdin,stdin);
+	key[max_key_size_stdin-1]='\0';
     }
 
     if(args->data_file_present)
@@ -87,7 +108,6 @@ void DecodeData(program_arguments*args)
     fclose(f_out);
 
     delete [] data;
-    key = new char[2];/** REMOVE THIS AFTER FINISHING KEY HANDLING CODE **/
     delete [] key;
     delete [] decoded_data;
 
