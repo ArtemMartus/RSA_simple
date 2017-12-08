@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string.h>
-#include "constants.h"
 #include "utils.h"
 #include "main.h"
 #include "rsa.h"
 #include "excep.h"
+
+static const char* KEYFILE_IO_ERROR = "Keyfile error";
+static const char* DATA_IO_ERROR = "Datafile error";
 
 void DecodeData(program_arguments*args)
 {
@@ -39,16 +41,16 @@ void DecodeData(program_arguments*args)
 
 	if(ret == 0)
 	    throw new IOException(KEYFILE_IO_ERROR,"cannot read private key from file.");
-	fclose(f);
+	fclose(kF);
 	printf("Successfully loaded private key into memory!\n");
     }
     else
-    {	key = new char[max_key_size_stdin];
-	bzero(data,max_key_size_stdin);
+    {	key = new char[256];
+	bzero(data,256);
 
 	printf("You have not specified key file!\nEnter private key to encode(2B maximum):");
-	fgets(key,max_key_size_stdin,stdin);
-	key[max_key_size_stdin-1]='\0';
+	fgets(key,256,stdin);
+	key[256-1]='\0';
     }
 
     if(args->data_file_present)
@@ -78,12 +80,12 @@ void DecodeData(program_arguments*args)
     }
     else
     {
-	data = new char[max_data_size_stdin];
-	bzero(data,max_data_size_stdin);
+	data = new char[256];
+	bzero(data,256);
 
 	printf("You have not specified data file!\nEnter data to decode(8kB maximum):");
-	fgets(data,max_data_size_stdin,stdin);
-	data[max_data_size_stdin-1]='\0';
+	fgets(data,256,stdin);
+	data[256-1]='\0';
     }
     printf("Decoding...\n");
 
@@ -96,7 +98,7 @@ void DecodeData(program_arguments*args)
 
     FILE * f_out = 0;
     int ret = 0;
-    char dec_data_file[max_path_size]={0};
+    char dec_data_file[256]={0};
 
     snprintf(dec_data_file,sizeof(dec_data_file),"%s_decoded",args->data_file);
     f_out = fopen(dec_data_file,"w");

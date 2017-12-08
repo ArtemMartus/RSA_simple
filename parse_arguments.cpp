@@ -1,10 +1,13 @@
 #include <iostream>
 #include <string.h>
-#include "constants.h"
 #include "utils.h"
 #include "main.h"
 #include "excep.h"
 #include "rsa.h"
+
+static const char* ARG_BADINPUT = "Bad input";
+static const char* ARG_ABSENT = "No arguments passed";
+static const char* ARG_BADFILE = "Bad file";
 
 void ParseArguments(int argc,char**argv,program_arguments * args)
 {
@@ -71,6 +74,12 @@ void ParseArguments(int argc,char**argv,program_arguments * args)
 	    args->data_file_present = true;
 	    continue;
 	}
+	if(strcmp((const char*)arg,"--help")==0)
+	{
+	    printf("\nUse %s command to point path to the keyfile.\nUse %s command to point path to the datafile.\nUse %s command to generate keys.\nUse %s command to encode data.\nUse %s command to decode data.\n\nExample: -gen -key mykey.txt\n","-key","-data","-gen","-encode","-decode");
+	    continue;
+	}
+	throw new ArgumentException(ARG_BADINPUT,"unknown argument");
     }
 }
 

@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string.h>
-#include "constants.h"
 #include "utils.h"
 #include "main.h"
 #include "excep.h"
 #include "rsa.h"
+
+static const char* KEYFILE_IO_ERROR = "Keyfile error";
+static const char* DATA_IO_ERROR = "Datafile error";
 
 void EncodeData(program_arguments* args)
 {
@@ -40,16 +42,16 @@ void EncodeData(program_arguments* args)
 
 	if(ret == 0)
 	    throw new IOException(KEYFILE_IO_ERROR,"cannot read public key from file.");
-	fclose(f);
+	fclose(kF);
 	printf("Successfully loaded public key into memory!\n");
     }
     else
-    {	key = new char[max_key_size_stdin];
-	bzero(data,max_key_size_stdin);
+    {	key = new char[256];
+	bzero(data,256);
 
 	printf("You have not specified key file!\nEnter public key to encode(2B maximum):");
-	fgets(key,max_key_size_stdin,stdin);
-	key[max_key_size_stdin-1]='\0';
+	fgets(key,256,stdin);
+	key[256-1]='\0';
     }
     
 
@@ -80,12 +82,12 @@ void EncodeData(program_arguments* args)
     }
     else
     {
-	data = new char[max_data_size_stdin];
-	bzero(data,max_data_size_stdin);
+	data = new char[256];
+	bzero(data,256);
 
 	printf("You have not specified data file!\nEnter data to encode(8kB maximum):");
-	fgets(data,max_data_size_stdin,stdin);
-	data[max_data_size_stdin-1]='\0';
+	fgets(data,256,stdin);
+	data[256-1]='\0';
     }
     printf("Encoding...\n");
 
@@ -98,7 +100,7 @@ void EncodeData(program_arguments* args)
 
     FILE * f_out = 0;
     int ret = 0;
-    char enc_data_file[max_path_size]={0};
+    char enc_data_file[256]={0};
 
     snprintf(enc_data_file,sizeof(enc_data_file),"%s_encoded",args->data_file);
     f_out = fopen(enc_data_file,"w");
