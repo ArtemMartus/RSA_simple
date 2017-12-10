@@ -46,14 +46,7 @@ void EncodeData(program_arguments* args)
 	printf("Successfully loaded public key into memory!\n");
     }
     else
-    {	key = new char[256];
-	bzero(data,256);
-
-	printf("You have not specified key file!\nEnter public key to encode(2B maximum):");
-	fgets(key,256,stdin);
-	key[256-1]='\0';
-    }
-    
+	throw new ArgumentException(KEYFILE_IO_ERROR,"you have not specified keyfile with right keys.");
 
     if(args->data_file_present)
     {
@@ -81,14 +74,8 @@ void EncodeData(program_arguments* args)
 	printf("Successfully loaded data into memory!\n");
     }
     else
-    {
-	data = new char[256];
-	bzero(data,256);
+       throw new ArgumentException(DATA_IO_ERROR,"you have not specified file to encode data from.");
 
-	printf("You have not specified data file!\nEnter data to encode(8kB maximum):");
-	fgets(data,256,stdin);
-	data[256-1]='\0';
-    }
     printf("Encoding...\n");
 
     int encoded_data_size = 0;

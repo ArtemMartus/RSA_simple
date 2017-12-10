@@ -45,13 +45,7 @@ void DecodeData(program_arguments*args)
 	printf("Successfully loaded private key into memory!\n");
     }
     else
-    {	key = new char[256];
-	bzero(data,256);
-
-	printf("You have not specified key file!\nEnter private key to encode(2B maximum):");
-	fgets(key,256,stdin);
-	key[256-1]='\0';
-    }
+	throw new ArgumentException(KEYFILE_IO_ERROR,"you have not specified keyfile.");
 
     if(args->data_file_present)
     {
@@ -79,14 +73,8 @@ void DecodeData(program_arguments*args)
 	printf("Successfully loaded data into memory!\n");
     }
     else
-    {
-	data = new char[256];
-	bzero(data,256);
+	throw new ArgumentException(DATA_IO_ERROR,"you have not specified datafile.");
 
-	printf("You have not specified data file!\nEnter data to decode(8kB maximum):");
-	fgets(data,256,stdin);
-	data[256-1]='\0';
-    }
     printf("Decoding...\n");
 
     int decoded_data_size = 0;
